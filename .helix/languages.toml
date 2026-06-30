@@ -12,4 +12,4 @@ config = { preview.background.enabled = true, preview.background.args = ["--data
 [[language]]
 name = "typst"
 auto-format = true
-language-servers= ["tinymist", "typst-languagetool"]
+language-servers= ["tinymist"]
