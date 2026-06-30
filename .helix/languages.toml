@@ -1,0 +1,15 @@
+# Typst spellchecking and lsp
+[language-server.typst-languagetool]
+command = "typst-languagetool-lsp"
+config = { options = "/home/rk/.config/helix/typst-languagetool.json" }
+
+
+[language-server.tinymist]
+command = "tinymist"
+config = { preview.background.enabled = true, preview.background.args = ["--data-plane-host=127.0.0.1:0", "--invert-colors=never", "--open"], typstExtraArgs = ["main.typ"]}
+
+
+[[language]]
+name = "typst"
+auto-format = true
+language-servers= ["tinymist", "typst-languagetool"]
