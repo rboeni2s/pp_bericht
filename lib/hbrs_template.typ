@@ -198,6 +198,16 @@
   ]
 }
 
+// Remove footnotes from the outline
+#let display_fn = state("display_fn", (true,))
+#let footnote(..args) = context if display_fn.get().last() { std.footnote(..args) }
+#let clean_footnote(it) = context {
+  display_fn.update(stack => (..stack, false))
+  it
+  display_fn.update(stack => stack.slice(0, -1))
+}
+
+
 #let template(meta: (), body) = {
   let theme = hbrs_theme
   let labels = hbrs_labels
@@ -215,6 +225,8 @@
       number-align: right,
     )
 
+    #show outline: clean_footnote
+
     #show outline.entry: it => {
       if it.element.body == [] or it.element.body == none {
         // Wenn die Überschrift leer ist, wird sie komplett ignoriert
@@ -224,6 +236,7 @@
     }
 
     #outline()
+
     #pagebreak()
 
     #outline(
