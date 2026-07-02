@@ -433,6 +433,16 @@ dass auf `my_callback()` reagieren und in `my_text` schreiben kann und damit als
 )
 
 
+@SBE implementiert die View Schnittstelle nicht direkt in den einzelnen Komponenten, sondern verwendet
+dafür sogenannte Globals in Slint @slint_docs_globals, das sind Singletons, die sich von allen Komponenten geteilt werden.
+Die Schnittstelle für Properties is auf einem `Model` Global und die Schnittstelle für Callbacks auf einem `Actions`
+Global definiert.
+
+#figure(
+  caption: [@SBE Architektur Übersicht],
+  image("res/architektur_overview2.png"),
+)
+
 
 = Bezug zum bisherigen Studium
 
