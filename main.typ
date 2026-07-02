@@ -308,7 +308,7 @@ Höher auflösende Versionen dieser Graphen liegen dem Digitalen Bericht bei#foo
 == Architektur der Anwendung
 
 === Slint als View im MVC Kontext
-Der @SBE muss in der Lage sein Daten aus seinem Datenmodel auf der Benutzeroberflache darzustellen und diese
+Der @SBE muss in der Lage sein Daten aus seinem Datenmodel auf der Benutzeroberfläche darzustellen und diese
 bei Änderung der Daten aktualisieren. Zudem müssen Änderungen der Daten in der Benutzeroberfläche auch im Datenmodell
 des @SBE reflektiert werden. Dies lässt sich durch ein @MVC Entwurfsmuster@patternsofEAA elegant Lösen.
 
@@ -347,7 +347,7 @@ dass auf `my_callback()` reagieren und in `my_text` schreiben kann und damit als
         ),
       )
       ```slint
-      component MyComponent
+      component MyComponent inherits Window
       {
         in-out property <string> my_text: "Hallo";
         callback my_callback();
@@ -379,49 +379,56 @@ dass auf `my_callback()` reagieren und in `my_text` schreiben kann und damit als
 
 #figure(
   supplement: [Beispiel],
-  caption: [Pseudo Rust-Code zu Beispiel 1],
+  caption: [Pseudo Rust-Code für einen Controller zu Beispiel 1],
 
   ```rust
-  struct Model
-  {
-    my_text: String,
-  }
-
-  struct Controller
-  {
-    model: Model,
-    view_adapter: Weak<MyComponent>
-  }
-
-  impl Controller
-  {
-    pub fn new(comp: &MyComponent) -> Self
+    #[derive(Default)]
+    struct Model
     {
-      // register the callback
-      comp.on_my_callback(|| println!("I was clicked"));
+      my_text: String,
+    }
 
-      Self
+    struct Controller
+    {
+      model: Model,
+      view_adapter: Weak<MyComponent>
+    }
+
+    impl Controller
+    {
+      pub fn new(comp: &MyComponent) -> Self
       {
-        // Store a reference to the view
-        view_adapter: comp.as_weak(),
-        model: Model::default(),
+        // register the callback
+        comp.on_my_callback(|| println!("I was clicked"));
+
+        Self
+        {
+          // Store a reference to the view
+          view_adapter: comp.as_weak(),
+          model: Model::default(),
+        }
+      }
+
+      pub fn set_my_text(&mut self, text: String)
+      {
+        self.model.my_text = text;
+        self.view_adapter
+              .unwrap()
+              .set_my_text(
+                  self.model.my_text.to_shared_string()
+              );
       }
     }
 
-    pub fn set_my_text(&mut self, text: String)
+    fn main()
     {
-      self.model.my_text = text;
-      self.view_adapter.unwrap().set_my_text(self.text.into());
+      let view_adapter = MyComponent::new().unwrap();
+      let mut controller = Controller::new(&view_adapter);
+
+      controller.set_my_text(String::from("Bonjour"));
+
+      view_adapter.run().unwrap();
     }
-  }
-
-  fn main()
-  {
-    let view_adapter = MyComponent::new().unwrap();
-    let mut controller = Controller::new(&view_adapter);
-
-    controller.set_my_text(String::from("Bonjour"));
-  }
   ```,
 )
 
